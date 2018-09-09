@@ -1,5 +1,7 @@
 import numpy
 import json
+import copy
+import math
 import os
 from io import StringIO
 import sys
@@ -11,33 +13,51 @@ def print_array(arr):
             print(arr[i][j])
 
 def initialize():
-    print("Initializing......")
     global json_text
+    global output_text
     json_text = "jsondatas.txt"
-    #init
-    print("Done.")
+    output_text = "output.txt"
 
-def rotate_right(d):
-    tmp = numpy.chararray((10, 10), unicode=True, itemsize=1000)
-    c = len(d)-1
-    for i in range(len(d)):
-        for j in range(len(d[0])):
-            tmp[j][c] = d[i][j]
-        c -= 1
-    print_array(tmp)
-    return tmp
+def rotate_right(jsondata, times):
+      
+    array_size=math.sqrt(len(jsondata['mapChip']))
+    if not array_size.is_integer():
+        return
+    s = int(array_size)
+    for r in range(times):      
+        tmp_data = copy.deepcopy(jsondata)
+        for i in range(len(jsondata['mapChip'])):
+            a = 99 - (i + ((s * (s-1)) - ((i%s) * (s+1)) - ((i // s) * (s-1))))
+            jsondata['mapChip'][a] = tmp_data['mapChip'][i]
+            if len(tmp_data['mapChip'][i]) > 0:
+                jsondata['mapChip'][a]['addrId'] ='mapChipAdr_'+ str(s - (i//s)) +'-'+ str(i%s+2)
+                jsondata['mapChip'][a]['mapDirectionType'] =  (tmp_data['mapChip'][i]['mapDirectionType'] + 90) % 360
+
+    
+
+
+def appry(data_edited, jsondata):
+    c = 0
+    for i in range(len(datas)):
+        for j in range(len(datas)):
+            jsondata['mapChip'][c] = datas[i][j]
+            c += 1
 
 if __name__ == "__main__":
     initialize()
     global json_text
-    datas = numpy.chararray((10, 10), unicode=True, itemsize=1000)
-    print(len(datas))
+    global output_text
+    output = ""
     with open(json_text, "r") as fin:
         c = 0
         for list in fin:
             jsondata = json.loads(list.strip())
-            for i in range(len(datas)):
-                for j in range(len(datas[0])):
-                    datas[i][j] = jsondata['mapChip'][c]
-                    c += 1
-    rotate_right(datas)
+            rotate_right(jsondata,1)
+            output = output.join(str(jsondata)+'\n')
+    if not os.path.isfile(output_text):
+        with open(output_text, "w") as fout:
+            fout.write(output)
+    else:  
+        with open(output_text, "x") as fout:
+            fout.write(output)
+    
