@@ -26,21 +26,11 @@ def rotate_right(jsondata):
     s = int(array_size) 
     tmp_data = copy.deepcopy(jsondata)
     for i in range(len(jsondata['mapChip'])):
-        a = 99 - (i + ((s * (s-1)) - ((i%s) * (s+1)) - ((i // s) * (s-1))))
+        a = (len(jsondata['mapChip']) - 1) - (i + ((s * (s-1)) - ((i%s) * (s+1)) - ((i // s) * (s-1))))
         jsondata['mapChip'][a] = tmp_data['mapChip'][i]
         if len(tmp_data['mapChip'][i]) > 0:
             jsondata['mapChip'][a]['addrId'] ='mapChipAdr_'+ str(s - (i//s)) +'-'+ str(i%s+2)
             jsondata['mapChip'][a]['mapDirectionType'] =  (tmp_data['mapChip'][i]['mapDirectionType'] + 90) % 360
-
-    
-
-
-def appry(data_edited, jsondata):
-    c = 0
-    for i in range(len(datas)):
-        for j in range(len(datas)):
-            jsondata['mapChip'][c] = datas[i][j]
-            c += 1
 
 if __name__ == "__main__":
     initialize()
@@ -57,6 +47,7 @@ if __name__ == "__main__":
             for times in range(3):
                 rotate_right(jsondata)
                 output += str(jsondata)+'\n'
+    output = output.replace("'",'"')
     if os.path.exists(output_text):
         with open(output_text, "w") as fout:
             fout.write(output)
