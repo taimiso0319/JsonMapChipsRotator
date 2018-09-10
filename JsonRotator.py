@@ -13,10 +13,13 @@ def print_array(arr):
             print(arr[i][j])
 
 def initialize():
+    path = os.path.dirname(sys.argv[0]) + "/"
     global json_text
     global output_text
-    json_text = "jsondatas.txt"
-    output_text = "output.txt"
+    if len(path) == 1:
+        path = ""
+    json_text = path + "jsondatas.txt"
+    output_text = path + "output.txt"
 
 def rotate_right(jsondata):
       
@@ -33,9 +36,9 @@ def rotate_right(jsondata):
             jsondata['mapChip'][a]['mapDirectionType'] =  (tmp_data['mapChip'][i]['mapDirectionType'] + 90) % 360
 
 if __name__ == "__main__":
-    initialize()
     global json_text
     global output_text
+    initialize()
     output = ""
     if sum(1 for line in open(json_text)) > 5000:
         print("too much lines for input, please make sure that has less than 5000 lines.")
